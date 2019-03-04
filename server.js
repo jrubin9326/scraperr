@@ -26,47 +26,49 @@ const MONGODB_URI =
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
 //routes
-app.get("/scrape", function(req, res) {
-  axios.get("https://www.theatlantic.com/").then(function(response) {
-    let $ = cheerio.load(response.data);
-    // Now, we grab every h2 within an article tag, and do the following:
-    $(".o-hed c-cover-story__hed").each(function(i, element) {
-      // Save an empty result object
-      let result = {};
+app.get("/scrape", (req, res) => {
+  axios
+    .get("https://www.theatlantic.com/most-popular/")
+    .then(function(response) {
+      let $ = cheerio.load(response.data);
 
-      // Add the text and href of every link, and save them as properties of the result object
-      result.title = $(this)
-        .children("a")
-        .text();
-      result.link = $(this)
-        .children("a")
-        .attr("href");
+      $("a").each((i, element) => {
+        // Save an empty result object
+        let result = {};
 
-      // Create a new Article using the `result` object built from scraping
-      db.Article.create(result)
-        .then(dbArticle => console.log(dbArticle))
-        // View the added result in the console
+        // Add the text and href of every link, and save them as properties of the result object
+        result.title = $(this)
+          .find("h2")
+          .text();
+        result.link = $(this).attr("href");
 
-        .catch(function(err) {
-          // If an error occurred, log it
-          console.log(err);
-        });
+        // Create a new Article using the `result` object built from scraping
+        db.Article.create(result)
+          .then(dbArticle => console.log(dbArticle))
+          // View the added result in the console
+
+          .catch(function(err) {
+            // If an error occurred, log it
+            console.log(err);
+          });
+      });
+
+      // Send a message to the client
+      res.send("Scrape Complete");
     });
-
-    // Send a message to the client
-    res.send("Scrape Complete");
-  });
 });
 
 // Route for getting all Articles from the db
 app.get("/articles", (req, res) => {
   // Grab every document in the Articles collection
-  db.Article.find(req.query)
-    .then(function(dbArticle) {
-      // If we were able to successfully find Articles, send them back to the client
-      res.json(dbArticle);
-    })
-    .catch(err => res.json(err));
+  console.log(req.query.title);
+  //   db.Article.find(req.title)
+  // .then(function(dbArticle) {
+  //   // If we were able to successfully find Articles, send them back to the client
+  //   //   res.json(dbArticle);
+  //   console.log(dbArticle);
+  // })
+  // .catch(err => res.json(err));
 });
 
 // Route for grabbing a specific Article by id, populate it with it's note
