@@ -3,24 +3,25 @@ var Schema = mongoose.Schema;
 
 var ArticleSchema = new Schema({
   title: {
-    type: String,
-    required: true
+    type: String
   },
 
   link: {
-    type: String,
-    required: true
+    type: String
   },
-  saved: {
-    type: Boolean,
-    default: false
+  description: {
+    type: String
   },
+  //   saved: {
+  //     type: Boolean,
+  //     default: false
+  //   },
   note: {
     type: Schema.Types.ObjectId,
     ref: "Note"
   }
 });
 
-const Article = mongoose.model("Article", ArticleSchema);
+let Article = mongoose.model("Article", ArticleSchema);
 
 module.exports = Article;
