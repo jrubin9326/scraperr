@@ -14,3 +14,17 @@ nav a {
 nav a .active:hover {
   color: pink;
 }
+
+.art {
+  padding-left: 20px;
+  font-family: "Montserrat", sans-serif;
+}
+
+data.id {
+  font-size: 30px;
+}
+
+.title {
+  font-weight: 800;
+  color: rgb(0, 0, 0);
+}
